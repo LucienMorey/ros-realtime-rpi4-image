@@ -17,6 +17,7 @@ class RequirementNotMetError(RuntimeError):
 LOOP_DEVICE_FILENAME = "loop-device.txt"
 DEFAULT_CHROOT_PATH = "/tmp/rpi4-image-build"
 CMAKE_TOOLCHAIN_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data", "toolchain.cmake")
+REPOS_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data", "base.repos")
 
 
 class Builder(object):
@@ -260,7 +261,7 @@ class Builder(object):
 
   def run_phase1_host_scripts(self):
     for phase1_host_path in self.phase1_host_paths:
-      self._run_script_on_host(phase1_host_path)
+      self._run_script_on_host(phase1_host_path, more_env_vars={"REPOS_FILE": REPOS_FILE})
 
   def run_phase1_target_scripts(self):
     for phase1_target_path in self.phase1_target_paths:

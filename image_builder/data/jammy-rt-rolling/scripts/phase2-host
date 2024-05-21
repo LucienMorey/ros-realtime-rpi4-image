@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -e -o pipefail
+
+cd ${CACHE_DIR}/ros2_x
+
+# image_tools and intra_process demo are only skipped while opencv is not present in the image
+# we should be able to add them again if we get over this. 
+colcon build \
+  --cmake-force-configure \
+  --cmake-args \
+  -DCMAKE_VERBOSE_MAKEFILE=ON \
+  -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} \
+  --build-base ${CHROOT_PATH}/opt/ros/rolling_build/ \
+  --install-base ${CHROOT_PATH}/opt/ros/rolling/ \
+  --continue-on-error \
+  --packages-skip-build-finished \
+  --packages-ignore image_tools intra_process_demo
+
+rm -r ${CHROOT_PATH}/opt/ros/rolling_build/
