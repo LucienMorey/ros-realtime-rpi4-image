@@ -24,7 +24,7 @@ jobs:
             - '.github/workflows/setup-dependencies.sh'
             - '.github/workflows/build.yml'
 
-  build-focal:
+  build-jammy-rolling:
     needs: changes
     runs-on: ubuntu-latest
     if: ${{ needs.changes.outputs.check-changes == 'true' }}
@@ -35,7 +35,7 @@ jobs:
         run: .github/workflows/setup-dependencies.sh
 
       - name: Build image
-        run: .github/workflows/build.sh focal-rt-ros2
+        run: .github/workflows/build.sh jammy-rt-rolling
 
   build-jammy:
     needs: changes

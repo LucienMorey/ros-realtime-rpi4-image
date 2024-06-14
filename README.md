@@ -99,8 +99,8 @@ This is a custom image builder for the Raspberry Pi 4. Some features:
   - Nice logs that aids with debugging of the build, should things go wrong.
   - Use tools like `pv` to display progress when applicable.
 - The features of the actual RT image is difficult to document without becoming
-  out of date quickly. Please take a look at `focal-rt-ros2/ros2/rootfs/setup/phase1.sh`
-  for the setup script that runs against the Ubuntu image and `focal-rt-ros2/rootfs`
+  out of date quickly. Please take a look at `jammy-rt-ros2/ros2/rootfs/setup/phase1-target`
+  for the setup script that runs against the Ubuntu image and `jammy-rt-ros2/rootfs`
   for files that gets overlaid on top of the Ubuntu image. That said, some basics are:
   - Installed [`PREEMPT_RT` kernel](https://github.com/ros-realtime/rt-kernel-docker-builder).
   - Pinned CPU frequency and performance governor.
@@ -135,8 +135,6 @@ and `qemu-aarch64-static`.
 
 You will also need `python3`.
 
-To build the `focal-rt-ros2` image, you'll also need: `zip`.
-
 For Ubuntu, you can simply run:
 
 ```
@@ -146,8 +144,8 @@ $ sudo apt install parted pv rsync wget systemd-container qemu-user-static make 
 ### To run
 
 1. Build the image
+  - To build the Ubuntu 22.04 + ROS Rolling image: `make jammy-rt-rolling`.
   - To build the Ubuntu 22.04 + ROS Humble image: `make jammy-rt-ros2`.
-  - To build the Ubuntu 20.04 + ROS Galactic image: `make focal-rt-ros2`.
 2. Take the image in the `out` folder and `dd` it into an SD card (or flash it
    in another way).
 

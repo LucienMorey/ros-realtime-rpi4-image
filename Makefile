@@ -1,4 +1,4 @@
-.PHONY: focal-rt-ros2 jammy-rt-ros2 clean
+.PHONY: jammy-rt-rolling jammy-rt-ros2 clean
 
 jammy-rt-rolling:
 	sudo ./ros-rt-img build jammy-rt jammy-rt-rolling

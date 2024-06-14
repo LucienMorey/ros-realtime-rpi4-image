@@ -67,7 +67,7 @@ structure:
   the root of the image being built. The copy of files occur before any of the
   phase1/phase2 scripts are executed.
 
-A full example of this directory can be seen in [`focal-rt`](../focal-rt).
+A full example of this directory can be seen in [`jammy-rt`](../jammy-rt).
 
 ### `config.ini`
 

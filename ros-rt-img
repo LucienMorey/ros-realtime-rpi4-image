@@ -62,8 +62,8 @@ def parse_arguments():
     "profiles",
     type=str,
     nargs="*",
-    default=["focal-rt", "focal-rt-galactic"],
-    help="The profiles to be built. The order is how they will overlay each other. Default: focal-rt, focal-rt-galactic"
+    default=["jammy-rt", "jammy-rt-humble"],
+    help="The profiles to be built. The order is how they will overlay each other. Default: jammy-rt, jammy-rt-humble"
   )
 
   subparsers.add_parser("teardown", help="Reset the ongoing session (if any) and unmount the mounted image and teardown the loop device (if required)")
