@@ -206,12 +206,10 @@ class Builder(object):
   def setup_loop_device_and_mount_partitions(self):
     self.logger.info(f"expanding image to {self.build_vars['image_size']} with truncate")
     self._run_script_on_host(["truncate", "-s", self.build_vars["image_size"], self.output_filename])
-
-    partition_end_in_mb = int(round(os.path.getsize(self.output_filename) / 1000.0 / 1000.0))
     partition_num = len(subprocess.check_output(["partx", "-g", self.output_filename]).decode("utf-8").strip().splitlines())
-    self.logger.info(f"growing the last partition (partition number={partition_num}) to {partition_end_in_mb}MB")
-
-    self._run_script_on_host(["parted", self.output_filename, "resizepart", str(partition_num), str(partition_end_in_mb)])
+    self.logger.info(f"growing the last partition (partition number={partition_num}) to {self.build_vars['image_size']}")
+    self._run_script_on_host(["sgdisk", "-e", self.output_filename])
+    self._run_script_on_host(["parted", self.output_filename, "resizepart", str(partition_num), str(self.build_vars['image_size'])])
 
     loop_device = subprocess.check_output(["losetup", "-P", "--show", "-f", self.output_filename]).decode("utf-8").strip()
 
@@ -224,7 +222,7 @@ class Builder(object):
     # Reverse order because the rootfs needs to be mounted first, and the
     # rootfs is assumed to be the last partition.
     for i, mount_point in reversed(list(enumerate(self.build_vars["image_mounts"].split(",")))):
-      i += 1
+      i += 2
       device_name = f"{loop_device}p{i}"
       mount_point = os.path.join(self.chroot_path, mount_point.lstrip("/"))
 

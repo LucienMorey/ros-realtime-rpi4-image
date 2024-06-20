@@ -8,6 +8,10 @@ jammy-rt-rolling:
 jammy-rt-ros2:
 	sudo ./ros-rt-img build jammy-rt jammy-rt-humble
 
+
+riscv-rt:
+	sudo ./ros-rt-img build riscv-rt
+
 clean:
 	sudo ./ros-rt-img teardown
 	sudo rm -rf out cache

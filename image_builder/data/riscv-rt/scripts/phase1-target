@@ -1,0 +1,98 @@
+#!/bin/bash
+
+set -e -o pipefail
+# echo "PINNED_CPU_FREQUENCY=${PINNED_CPU_FREQUENCY}" > /etc/default/cpu-frequency
+
+export DEBIAN_FRONTEND=noninteractive
+
+# Setting up PREEMPT_RT kernel
+# cd /setup
+# dpkg -i linux-*.deb
+# rm linux-*.deb
+
+apt-get update
+
+apt-get install -y tmux
+
+apt-get install -y build-essential libnuma-dev
+
+# install ros2 dependencies to facilitate cross compilation
+apt-get install -y \
+    libtinyxml2-dev \
+    libyaml-dev \
+    libspdlog-dev \
+    libyaml-cpp-dev \
+    libasio-dev \
+    liblttng-ust-dev \
+    cmake \
+    libpython3-dev \
+    liblttng-ctl-dev \
+    libeigen3-dev \
+    python3-numpy \
+    libbullet-dev \
+    libacl1-dev \
+    curl \
+    libcurl4-openssl-dev \
+    python3-psutil \
+    python3-packaging \
+    python3-lark
+
+# Remove some packages that are likely not needed:
+# - snapd: no one packages their robot apps with snap, right?
+# - fwupd: I don't think we need to update devices firmware like a logitech mouse, and it also uses like 20MB of RAM...
+# - cryptsetup: don't need to setup disk encryption. Also, causes build failures on some host system configurations.
+# - mdadm: don't need to setup raid.
+# - Stock linux kernel: for obvious reasons.
+# apt-get purge --autoremove -y \
+#   cryptsetup \
+#   fwupd \
+#   mdadm \
+#   snapd \
+#   btrfs-progs \
+#   xfsprogs
+  # linux-headers-raspi \
+  # linux-image-raspi \
+  # linux-modules-${STOCK_LINUX_VERSION}-raspi \
+  # linux-headers-${STOCK_LINUX_VERSION}-raspi \
+  # linux-raspi-headers-${STOCK_LINUX_VERSION} \
+  # linux-image-${STOCK_LINUX_VERSION}-raspi \
+  # linux-raspi \
+
+
+# Check to make sure that the kernel booted will be the RT kernel, not the
+# regular kernel. It is possible that the base image changed the kernel version
+# and STOCK_LINUX_VERSION is not updated here, which may result cause an error
+# here. If that happens, the STOCK_LINUX_VERSION must be updated. It is also
+# possible for something else to break this, in which case more investigations
+# would be needed.
+# if [ "$(md5sum /boot/firmware/vmlinuz | cut -f 1 -d ' ')" != "$(md5sum /boot/vmlinuz-${LINUX_RT_VERSION}-raspi | cut -f 1 -d ' ')" ]; then
+#   echo "ERROR: /boot/firmware/vmlinuz is not using the RT version, something is wrong with the build..."
+#   exit 1
+# fi
+
+# if [ "$(md5sum /boot/firmware/initrd.img | cut -f 1 -d ' ')" != "$(md5sum /boot/initrd.img-${LINUX_RT_VERSION}-raspi | cut -f 1 -d ' ')" ]; then
+#   echo "ERROR: /boot/firmware/initrd.img is not using the RT version, something is wrong with the build..."
+#   exit 1
+# fi
+
+# Disable ondemand govenor and set constant frequency
+# systemctl disable ondemand
+# systemctl enable cpu-frequency
+
+# Disable rt-throttling
+# systemctl enable rt-throttling
+
+# Disable memory compaction
+# systemctl enable memory-compaction
+
+# Disable unattended-upgrades
+apt remove -y unattended-upgrades
+
+# Remove multipath-tools, see: https://github.com/ros-realtime/ros-realtime-rpi4-image/issues/30
+apt-get purge -y multipath-tools
+
+# TODO: If specified, create an image with isolcpus already setup.
+
+# clean up to reduce image size
+apt-get clean
+rm -rf /var/lib/apt/lists/*

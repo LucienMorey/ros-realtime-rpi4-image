@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e -o pipefail
+
+# prep core workspace for cross compilation later in the build
+mkdir -p ${CACHE_DIR}/ros2_x/src
+vcs import --input ${REPOS_FILE} ${CACHE_DIR}/ros2_x/src
